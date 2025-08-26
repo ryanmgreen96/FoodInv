@@ -17,56 +17,67 @@
             align-items: center;
         }
 
-        .nav {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;              /* <-- Allows wrapping on small screens */
-    justify-content: center;      /* <-- Keeps wrapped items centered */
-}
-
-.nav-button {
-    background-color: #5A3320;
-  
-    color: #FFD700;
-    padding: 10px 20px;
-    border: none;
-    
-    cursor: pointer;
-    font-size: 1.2em;
-    white-space: nowrap;          /* Optional: prevent text break mid-word */
-}
-
-        .items-container {
-            display: none;
-            width: 100%;
-            justify-content: center;
-            flex-direction: column;
-            align-items: center;
+        h2 {
+            margin-bottom: 10px;
         }
 
-        .items-container.active {
+        .controls {
             display: flex;
-        }
-
-        .section-content {
-            display: flex;
-            justify-content: center;
-            gap: 60px;
-            flex-wrap: wrap;
-        }
-
-        .column {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .item {
-            display: flex;
-            align-items: center;
             gap: 10px;
-            font-size: 1.1em;
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 800px;
+            align-items: center;
+        }
+
+        #notes {
+            flex: 1;
+            padding: 6px 10px;
+            font-size: 1em;
+            border: 2px solid #FFD700;
+            background-color: #5A3320;
+            color: #FFD700;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 30px;
+            height: 30px;
+            font-size: 1em;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button#reset-all {
+            background-color: #228B22;
+        }
+
+        button#reset-text {
+            background-color: #B22222;
+        }
+
+        .grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            max-width: 800px;
+            overflow-y: auto;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .cell {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 150px;
+            flex: 1;
         }
 
         .box {
@@ -74,8 +85,12 @@
             height: 20px;
             border: 2px solid #FFD700;
             cursor: pointer;
-            display: inline-block;
             border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .red {
+            background-color: #B22222;
         }
 
         .green {
@@ -86,257 +101,122 @@
             background-color: #CCCC00;
         }
 
-        .red {
-            background-color: #B22222;
-        }
-
-        #produce-nuts-wrapper {
-            margin-top: 40px;
-            display: flex;
-            justify-content: center;
-        }
-
-        #nuts {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
-        }
-        .mini-box {
-  width: 12px;
-  height: 12px;
-  border: 1px solid #FFD700;
-  border-radius: 2px;
-  cursor: pointer;
-  display: inline-block;
-}
-
-.grey { background-color: #888; }
-.black { background-color: #000; }
-
-
-        @media (max-width: 600px) {
-            .section-content {
-                flex-direction: column;
-                align-items: center;
-                gap: 30px;
-            }
-
-            #produce-nuts-wrapper {
-                margin-top: 20px;
-            }
+        .blank {
+            background-color: transparent;
+            border: 2px solid #FFD700;
         }
     </style>
 </head>
 
 <body>
 
-    <div class="nav">
-        <div class="nav-button" onclick="showSection('ingredients')">Ingredients</div>
-        <div class="nav-button" onclick="showSection('grain')">Grain</div>
-        <div class="nav-button" onclick="showSection('produce')">Produce</div>
-        <div class="nav-button" onclick="showRedItems()">🔴 Red Items</div>
-    </div>
-      
-
-    <!-- INGREDIENTS -->
-    <div class="items-container" id="ingredients-section">
-        <div class="section-content">
-            <div class="column" id="ingredients"></div>
-        </div>
+    <h2>Food Inventory</h2>
+    <div class="controls">
+        <button id="reset-all"></button>
+        <input type="text" id="notes" placeholder="Write something..." />
+        <button id="reset-text"></button>
     </div>
 
-    <!-- GRAIN -->
-    <div class="items-container" id="grain-section">
-        <div class="section-content">
-            <div class="column" id="grain-left"></div>
-            <div class="column">
-                <div class="column" id="grain-right-top"></div>
-                <div class="column" id="grain-right-bottom" style="margin-top: 10px;"></div>
-            </div>
-        </div>
-    </div>
+    <div class="grid" id="food-grid"></div>
 
-    <!-- PRODUCE -->
-    <div class="items-container" id="produce-section">
-        <div class="section-content">
-            <div class="column" id="produce-left"></div>
-            <div class="column" id="produce-right"></div>
-        </div>
-        <div id="produce-nuts-wrapper">
-            <div class="column" id="nuts"></div>
-        </div>
-    </div>
-    <div class="items-container" id="red-section">
-    <div class="section-content">
-        <div style="width: 100%; text-align: center; margin-bottom: 20px;">
-            <input id="custom-red-input" type="text" placeholder="Add custom red item"
-                style="padding: 6px; font-size: 1em; width: 200px; background-color: #5A3320; color: #FFD700; border: 1px solid #FFD700;" />
-            <button onclick="resetCustomRedTextbox()"
-                style="padding: 6px 12px; font-size: 1em; background-color: #FFD700; color: #5A3320; border: none; cursor: pointer; font-weight: bold;">
-                +
-            </button>
-        </div>
-        <div class="column" id="red-items"></div>
-    </div>
-
-
-
-    </div>
-      
-   <script>
-    const STATES = ["", "green", "red", "yellow"];
-    const DATA = {
-        ingredients: ["salt", "pepper", "lemon", "lime", "PB", "jam", "flax", 'margarine', 'Blueberries'],
-        grain: {
-            left: ["Quinoa", "Barley", "Lentils", "small beans", "tuna", "corn"],
-            rightTop: ["Potatoes", "springrolls", "dumplings", "popcorn"],
-            rightBottom: ["bagels", "Muffins", "bread"]
-        },
-        produce: {
-            left: ["oranges", "apples", "bananas", "cranberry"],
-            right: ["Kale", "tomato", "carrot"],
-            nuts: ["Peanuts", "sunflower", "Almond"]
-        }
-    };
-
-    function createItem(name, useMiniBox = false) {
-        const id = name.replace(/\s+/g, "_").toLowerCase();
-        const state = localStorage.getItem("state_" + id) || "";
-        const miniState = localStorage.getItem("mini_" + id) || "";
-
-        const div = document.createElement("div");
-        div.className = "item";
-
-        // Primary toggle box
-        const box = document.createElement("div");
-        box.className = "box";
-        if (state) box.classList.add(state);
-        box.onclick = function () {
-            let current = STATES.indexOf(
-                box.classList.contains("green") ? "green" :
-                    box.classList.contains("yellow") ? "yellow" :
-                        box.classList.contains("red") ? "red" : ""
-            );
-            const next = (current + 1) % STATES.length;
-            box.classList.remove("green", "yellow", "red");
-            if (STATES[next]) box.classList.add(STATES[next]);
-            localStorage.setItem("state_" + id, STATES[next]);
-        };
-        div.appendChild(box);
-
-        // Secondary mini-box
-        if (useMiniBox) {
-            const miniStates = ["", "grey", "black"];
-            const miniBox = document.createElement("div");
-            miniBox.className = "mini-box";
-            if (miniState) miniBox.classList.add(miniState);
-            miniBox.onclick = function () {
-                let current = miniStates.indexOf(
-                    miniBox.classList.contains("black") ? "black" :
-                        miniBox.classList.contains("grey") ? "grey" : ""
-                );
-                const next = (current + 1) % miniStates.length;
-                miniBox.classList.remove("grey", "black");
-                if (miniStates[next]) miniBox.classList.add(miniStates[next]);
-                localStorage.setItem("mini_" + id, miniStates[next]);
-            };
-            div.appendChild(miniBox);
-        }
-
-        // Label
-        const label = document.createElement("span");
-        label.textContent = name;
-        div.appendChild(label);
-
-        return div;
-    }
-
-    function loadItems(containerId, items, useMiniBox = false) {
-        const container = document.getElementById(containerId);
-        items.forEach(item => {
-            container.appendChild(createItem(item, useMiniBox));
-        });
-    }
-
-    function showSection(name) {
-        document.querySelectorAll(".items-container").forEach(el => {
-            el.classList.remove("active");
-        });
-        const section = document.getElementById(name + "-section");
-        if (section) section.classList.add("active");
-    }
-
-    function saveCustomRedValue(value) {
-        localStorage.setItem("custom_red_item", value);
-    }
-
-    function loadCustomRedValue() {
-        return localStorage.getItem("custom_red_item") || "";
-    }
-
-    function resetCustomRedTextbox() {
-        localStorage.removeItem("custom_red_item");
-        document.getElementById("custom-red-input").value = "";
-    }
-
-    function refreshRedItems() {
-        const redContainer = document.getElementById("red-items");
-        redContainer.innerHTML = "";
-
-        const allItems = [
-            ...DATA.ingredients,
-            ...DATA.grain.left,
-            ...DATA.grain.rightTop,
-            ...DATA.grain.rightBottom,
-            ...DATA.produce.left,
-            ...DATA.produce.right,
-            ...DATA.produce.nuts
+    <script>
+        const STATES = ["green", "red"];
+        const YELLOW_STATES = ["blank", "yellow"];
+        const FOOD_LIST = [
+            ["Kale", "tomatoe"],
+            ["Oranges", "Cucumber"],
+            ["Craisins", "peanuts"],
+            ["big nuts", "seeds"],
+            ["Soy", "bananas"],
+            ["kale", "Berries"],
+            ["flax", "Margarine"],
+            ["lemon", "lime"],
+            ["Barley$", "Qunioa$"],
+            ["corn$", "lentils$"],
+            ["Bread", "Bagels"],
+            ["Potatoes", "Popcorn"],
+            ["Fried", "Sweet"]
         ];
 
-        allItems.forEach(item => {
-            const id = item.replace(/\s+/g, "_").toLowerCase();
-            const state = localStorage.getItem("state_" + id);
-            if (state === "red") {
-                const useMiniBox = DATA.grain.left.includes(item);
-                redContainer.appendChild(createItem(item, useMiniBox));
-            }
-        });
-
-      
-    }
-
-    function showRedItems() {
-        document.querySelectorAll(".items-container").forEach(el => {
-            el.classList.remove("active");
-        });
-
-        document.getElementById("custom-red-input").value = loadCustomRedValue();
-        refreshRedItems();
-        document.getElementById("red-section").classList.add("active");
-    }
-
-    // Set up live tracking of the input box
-    document.addEventListener("DOMContentLoaded", function () {
-        const input = document.getElementById("custom-red-input");
-        if (input) {
-            input.value = loadCustomRedValue();
-            input.addEventListener("input", function () {
-                saveCustomRedValue(this.value.trim());
-            });
+        function createBox(key, states, defaultState) {
+            const box = document.createElement("div");
+            box.className = "box";
+            let savedState = localStorage.getItem(key) || defaultState;
+            box.classList.add(savedState);
+            box.onclick = function () {
+                const current = states.indexOf(states.find(s => box.classList.contains(s)));
+                const next = (current + 1) % states.length;
+                box.classList.remove(...states);
+                box.classList.add(states[next]);
+                localStorage.setItem(key, states[next]);
+            };
+            return box;
         }
-    });
 
-    // Initial Load
-    loadItems("ingredients", DATA.ingredients);
-    loadItems("grain-left", DATA.grain.left, true);
-    loadItems("grain-right-top", DATA.grain.rightTop);
-    loadItems("grain-right-bottom", DATA.grain.rightBottom);
-    loadItems("produce-left", DATA.produce.left);
-    loadItems("produce-right", DATA.produce.right);
-    loadItems("nuts", DATA.produce.nuts);
-</script>
+        function createCell(name, isLeft) {
+            const isDollar = name.includes("$");
+            const clean = name.replace("$", "").trim();
+            const outerKey = "outer_" + clean.toLowerCase();
+            const innerKey = "inner_" + clean.toLowerCase();
 
+            const cell = document.createElement("div");
+            cell.className = "cell";
+
+            if (isDollar && isLeft) {
+                cell.appendChild(createBox(outerKey, STATES, "green"));
+                cell.appendChild(createBox(innerKey, YELLOW_STATES, "blank"));
+                const label = document.createElement("span");
+                label.textContent = clean;
+                cell.appendChild(label);
+            } else if (isDollar && !isLeft) {
+                const label = document.createElement("span");
+                label.textContent = clean;
+                cell.appendChild(label);
+                cell.appendChild(createBox(innerKey, YELLOW_STATES, "blank"));
+                cell.appendChild(createBox(outerKey, STATES, "green"));
+            } else {
+                if (isLeft) cell.appendChild(createBox(outerKey, STATES, "green"));
+                const label = document.createElement("span");
+                label.textContent = clean;
+                cell.appendChild(label);
+                if (!isLeft) cell.appendChild(createBox(outerKey, STATES, "green"));
+            }
+            return cell;
+        }
+
+        // Build grid
+        const grid = document.getElementById("food-grid");
+        FOOD_LIST.forEach(pair => {
+            const row = document.createElement("div");
+            row.className = "row";
+            row.appendChild(createCell(pair[0], true));
+            row.appendChild(createCell(pair[1], false));
+            grid.appendChild(row);
+        });
+
+        // Text box save/load
+        const notes = document.getElementById("notes");
+        notes.value = localStorage.getItem("notes_value") || "";
+        notes.addEventListener("input", () => {
+            localStorage.setItem("notes_value", notes.value);
+        });
+
+        // Reset buttons
+        document.getElementById("reset-text").onclick = () => {
+            notes.value = "";
+            localStorage.removeItem("notes_value");
+        };
+
+        document.getElementById("reset-all").onclick = () => {
+            FOOD_LIST.forEach(pair => {
+                pair.forEach(name => {
+                    const clean = name.replace("$", "").trim().toLowerCase();
+                    localStorage.setItem("outer_" + clean, "green"); // only outer boxes
+                });
+            });
+            location.reload(); // refresh to show changes
+        };
+    </script>
 
 </body>
 
